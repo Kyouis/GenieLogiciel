@@ -10,10 +10,11 @@ create table Client (
     adresse_mail varchar(128) NOT NULL,
     num_tel varchar(20) NOT NULL,
     contrat boolean,
-    motif_contrat ENUM('Professionel', 'Personnel') 
-
+    motif_contrat ENUM('Professionel', 'Personnel'),
+	estInterne boolean
 );
-
+ALTER TABLE `GL_Borne`.`Client` 
+ADD COLUMN `estInterne` BOOLEAN DEFAULT FALSE;
 create table Borne (
     id_borne integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
     etat ENUM('disponible', 'indisponible', 'occupée', 'réservée') 
@@ -62,4 +63,6 @@ create table Vehicule (
     FOREIGN KEY (num_membre) REFERENCES Client(num_membre),
     FOREIGN KEY (id_borne) REFERENCES Borne(id_borne)
 );
+
+commit;
 
