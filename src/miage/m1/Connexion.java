@@ -1,9 +1,6 @@
 package miage.m1;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +46,45 @@ public class Connexion{
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+    }
+    //vérification borne dispo
+    public int firstBorneDispo() {
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM BORNE WHERE etat = 'disponible'");
+            while (rs.next()) {
+                return rs.getInt("id_borne");
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return -1;
+    }
+
+    //utilisation d'une borne
+    public void useBorne(String num, String user, String datedebut, String dateFin) {
+        try {
+            Statement s = con.createStatement();
+            int t = s.executeUpdate("UPDATE BORNE SET etat = 'Occupée' WHERE id_borne = "+num);
+            reserver(num, user, datedebut, dateFin);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    public void reserver(String numborne, String user, String dateDebut, String dateFin) {
+        try {
+            Statement s = con.createStatement();
+            String q = "INSERT INTO RESERVATION (date_deb, date_fin, num_membre, id_borne) VALUES ('"+dateDebut+"','"+dateFin+"','"+user+"','"+numborne+"')";
+            System.out.println(q);
+             int t = s.executeUpdate(q);
+            System.out.println("Reservation ok");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
     
     //verification de l'adresse email
