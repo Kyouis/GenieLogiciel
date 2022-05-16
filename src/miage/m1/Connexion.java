@@ -11,7 +11,7 @@ public class Connexion{
     public static void openConnexion() {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/GenieLogiciel","root","");
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/GL_Borne","root","");
             
             System.out.println("Connected");  
         }
