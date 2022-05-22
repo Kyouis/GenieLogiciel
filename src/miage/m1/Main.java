@@ -1,6 +1,8 @@
 
 package miage.m1;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -55,6 +57,10 @@ public class Main {
             case "2":
                 login();
                 break;
+            case "3":
+                System.out.println("/!\\Case de tests de fonctions");
+                connexion.rechResNumMbDuree();
+                break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");
                 Startmenu();
@@ -81,7 +87,7 @@ public class Main {
     }
 
     public static void actionMenu() {
-        System.out.println("Choississez l'action à réaliser");
+        System.out.println("Choisissez l'action à réaliser");
         System.out.println("1 - Réserver une borne \n" +
                 "2 - Utiliser une borne sans réservation \n");
         String choix = sc.nextLine();
@@ -113,7 +119,7 @@ public class Main {
             }
             System.out.println("Vous avez été assigné à la borne n°"+connexion.firstBorneDispo());
 
-            System.out.println("Choississez une date de fin au format YYYY-MM-DD");
+            System.out.println("Choisissez une date de fin au format YYYY-MM-DD");
             String d = sc.nextLine();
             connexion.useBorne(String.valueOf(connexion.firstBorneDispo()), userConnected, datedebut, d);
 

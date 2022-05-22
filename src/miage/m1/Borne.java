@@ -94,8 +94,9 @@ switch(choix_deb){
 
 
 			    if (borneDispo.getInt("estInterne") == 1){
+
 			    System.out.println("Que souhaitez vous faire ?/n1. Créer une borne ? 2.Reserver une borne ?");
-			    String choix_dev =sc.nextLine();
+			    String choix_dev = sc.nextLine();
 
 			    switch(choix_dev) {
 			    	case 1:
