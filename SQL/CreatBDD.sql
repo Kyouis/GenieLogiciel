@@ -1,7 +1,3 @@
-------------------------
---CréationBDD
-------------------------
-
 create table Client (
     num_membre integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
     nom varchar(128) NOT NULL,
@@ -11,10 +7,9 @@ create table Client (
     num_tel varchar(20) NOT NULL,
     contrat boolean,
     motif_contrat ENUM('Professionel', 'Personnel'),
-	estInterne boolean
+	estInterne BOOLEAN DEFAULT FALSE
 );
-ALTER TABLE `GL_Borne`.`Client` 
-ADD COLUMN `estInterne` BOOLEAN DEFAULT FALSE;
+
 create table Borne (
     id_borne integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
     etat ENUM('disponible', 'indisponible', 'occupée', 'réservée') 
@@ -27,6 +22,17 @@ create table Parametre (
     
 );
 
+create table Vehicule (
+    immatriculation varchar(128) PRIMARY KEY NOT NULL,
+    marque varchar(128) NOT NULL,
+    modele varchar(128) NOT NULL,
+    id_borne integer,
+    num_membre integer NOT NULL,
+
+    FOREIGN KEY (num_membre) REFERENCES Client(num_membre),
+    FOREIGN KEY (id_borne) REFERENCES Borne(id_borne)
+);
+
 create table Reservation (
     num_res integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
     date_deb datetime NOT NULL,
@@ -34,9 +40,12 @@ create table Reservation (
     delai_retard integer,
     num_membre integer NOT NULL,
     id_borne integer NOT NULL,
+    immatriculation varchar(9) NOT NULL,
 
     FOREIGN KEY (num_membre) REFERENCES Client(num_membre),
-    FOREIGN KEY (id_borne) REFERENCES Borne(id_borne)
+    FOREIGN KEY (id_borne) REFERENCES Borne(id_borne),
+	FOREIGN KEY (immatriculation) REFERENCES Vehicule(immatriculation)
+
 );
 
 
@@ -51,18 +60,4 @@ create table Transaction (
     FOREIGN KEY (num_membre) REFERENCES Client(num_membre),
     FOREIGN KEY (num_res) REFERENCES Reservation(num_res)
 );
-
-
-create table Vehicule (
-    immatriculation varchar(128) PRIMARY KEY NOT NULL,
-    marque varchar(128) NOT NULL,
-    modele varchar(128) NOT NULL,
-    id_borne integer,
-    num_membre integer NOT NULL,
-
-    FOREIGN KEY (num_membre) REFERENCES Client(num_membre),
-    FOREIGN KEY (id_borne) REFERENCES Borne(id_borne)
-);
-
 commit;
-
