@@ -4,6 +4,7 @@ package miage.m1;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,25 +19,7 @@ public class Main {
     public static void main(String[] args) {
 
         Connexion.openConnexion();
-        
-        /*
-        System.out.println("Cr�ation de compte : Veuillez entrez votre mail :");
-        String mail =sc.nextLine();
-        if (connexion.verifMail(mail)==true){   
-            System.out.println(" Veuillez entrez votre nom :");
-            String nom = sc.nextLine();
-            System.out.println("Veuillez entrez votre prenom :");
-            String prenom =sc.nextLine();
-            System.out.println("Veuillez entrez votre adresse :");
-            String adresse =sc.nextLine();
-            System.out.println("Veuillez entrez votre num�ro de t�l�phone :");
-            int tel =sc.nextInt();
-            connexion.addUser(nom,prenom,adresse,mail,tel, false, null);
-        }
-        else {
-            System.out.println("adresse non valide");
-        }
-        */
+
         //test recherche user 
         //connexion.fetchUser("1");
         //test ajout user 
@@ -49,7 +32,8 @@ public class Main {
 
     public static void Startmenu() {
         System.out.println("1 - Inscription à l'application\n" +
-                "2 - Connexion");
+                "2 - Connexion\n" +
+                "3 - Deconnexion");
         String choix = sc.nextLine();
         switch (choix) {
             case "1":
@@ -59,6 +43,9 @@ public class Main {
                 login();
                 break;
             case "3":
+                deco();
+                break;
+            case "4":
                 System.out.println("/!\\Case de tests de fonctions");
                 break;
             default:
@@ -68,7 +55,23 @@ public class Main {
     }
 
     public static void signin() {
-        //TODO
+        System.out.println("Cr�ation de compte : Veuillez entrez votre mail :");
+        String mail =sc.nextLine();
+        if (connexion.verifMail(mail)){
+            System.out.println(" Veuillez entrez votre nom :");
+            String nom = sc.nextLine();
+            System.out.println("Veuillez entrez votre prenom :");
+            String prenom =sc.nextLine();
+            System.out.println("Veuillez entrez votre adresse :");
+            String adresse =sc.nextLine();
+            System.out.println("Veuillez entrez votre numero de telephone :");
+            int tel =sc.nextInt();
+            connexion.addUser(nom,prenom,adresse,mail,tel, false, null);
+        }
+        else {
+            System.out.println("adresse non valide");
+        }
+        Startmenu();
     }
     static String num;
     public static void login() {
@@ -90,7 +93,8 @@ public class Main {
         connexion.propReservation(num);
         System.out.println("Choisissez l'action à réaliser");
         System.out.println("1 - Réserver une borne \n" +
-                "2 - Utiliser une borne sans réservation \n");
+                "2 - Utiliser une borne sans réservation \n" +
+                "3 - Prolonger ma réservation");
         String choix = sc.nextLine();
         switch (choix) {
             case "1":
@@ -98,6 +102,9 @@ public class Main {
                 break;
             case "2":
                 reservationBorne(false);
+                break;
+            case "3":
+                prolongation();
                 break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");
@@ -128,7 +135,25 @@ public class Main {
         actionMenu();
     }
 
+    public static void prolongation() {
+        System.out.println("Indiquez le numero de la borne qui est assignée à la reservation à prolonger");
+        String nBorne = sc.nextLine();
+        System.out.println("Indiquez la date de fin de la réservation à prolonger");
+        String datefin = sc.nextLine();
+        if (connexion.checkProlongationPossible(nBorne, datefin, "30")) {
+            System.out.println("votre prolongation est faite");
+            try {
+                java.sql.Date datefinparse= (java.sql.Date) new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(datefin);
+                connexion.reserver(nBorne, userConnected, datefin, new java.sql.Date(datefinparse.getTime()+((long) 30 *60*1000)).toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
+        } else {
+            System.out.println("il n'est pas possible de prolonger");
+        }
+        actionMenu();
+    }
 
 }
 

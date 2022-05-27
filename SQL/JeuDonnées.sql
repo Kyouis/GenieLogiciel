@@ -1,7 +1,3 @@
-------------------------
---JeuDonnées
-------------------------
-
 insert into Borne (id_borne, etat) values
         (1, 'occupée'),
         (2, 'réservée'),
