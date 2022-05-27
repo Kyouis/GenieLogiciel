@@ -33,19 +33,18 @@ public class Borne {
         }
     }
 
-    public void affciheBorneDispo() {
+    public void afficheBorneDispo() {
         try {
             System.out.println("Voici la liste des bornes disponibles :");
             String etat_borne =sc.nextLine();
             Statement stmt= con.createStatement();
 
-            //Récupere la listes des bornes dispo
-            ResultSet borneDispo = stmt.executeQuery("SELECT * FROM Borne WHERE etat= 'disponible'");
-            //récupere la colonne id_borne
-            borneDispo.getString("id_borne");
-            System.out.println(borneDispo);
-
-            borneDispo.getInt("estInterne");
+            //Récupère la liste des bornes dispo
+            ResultSet rs = stmt.executeQuery("SELECT id_borne FROM Borne WHERE etat= 'disponible'");
+            //Récupère la colonne id_borne
+            while (rs.next()) {
+                System.out.println("n° "+rs.getInt("id_borne"));
+            }
 
 
         } catch (Exception e) {

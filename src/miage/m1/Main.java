@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
+
 public class Main {
 
     static Scanner sc = new Scanner(System.in);
@@ -59,7 +60,6 @@ public class Main {
                 break;
             case "3":
                 System.out.println("/!\\Case de tests de fonctions");
-                connexion.rechResNumMbDuree();
                 break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");
@@ -70,10 +70,10 @@ public class Main {
     public static void signin() {
         //TODO
     }
-
+    static String num;
     public static void login() {
         System.out.println("Veuillez rentrer votre numéro de membre");
-        String num = sc.nextLine();
+        num = sc.nextLine();
         connexion.fetchUser(num);
         userConnected = num;
         System.out.println("Connection réussie");
@@ -87,6 +87,7 @@ public class Main {
     }
 
     public static void actionMenu() {
+        connexion.propReservation(num);
         System.out.println("Choisissez l'action à réaliser");
         System.out.println("1 - Réserver une borne \n" +
                 "2 - Utiliser une borne sans réservation \n");

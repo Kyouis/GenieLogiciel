@@ -1,9 +1,12 @@
 package miage.m1;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static miage.m1.Main.actionMenu;
 
 public class Connexion{
 	private static Connection con ;
@@ -79,9 +82,11 @@ public class Connexion{
     }
 
     public void reserver(String numborne, String user, String dateDebut, String dateFin) {
+        System.out.println("Renseignez votre plaque d'immatriculation.");
+        String immatriculation= sc.nextLine();
         try {
             Statement s = con.createStatement();
-            String q = "INSERT INTO RESERVATION (date_deb, date_fin, num_membre, id_borne) VALUES ('"+dateDebut+"','"+dateFin+"','"+user+"','"+numborne+"')";
+            String q = "INSERT INTO RESERVATION (immatriculation, date_deb, date_fin, num_membre, id_borne) VALUES ('"+immatriculation+"','"+dateDebut+"','"+dateFin+"',"+user+","+numborne+")";
             System.out.println(q);
              int t = s.executeUpdate(q);
             System.out.println("Reservation ok");
@@ -133,25 +138,50 @@ public class Connexion{
         duree = sc.nextInt();
         try {
             Statement stmt=con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT immatriculation FROM reservation WHERE num_membre = "+num_membre+" and TIMESTAMPDIFF(MINUTE,date_deb,date_fin) = "+duree);
+            ResultSet rs = stmt.executeQuery("SELECT immatriculation, id_borne FROM reservation WHERE num_membre = "+num_membre+" and TIMESTAMPDIFF(MINUTE,date_deb,date_fin) = "+duree+" and date_deb > sysdate() ORDER BY date_deb ASC");
+
+            ArrayList res_immat = new ArrayList<>();
+            ArrayList res_borne = new ArrayList<>();
 
             while (rs.next()) {
                 //COMMENT RECUPERER LE PREMIER DE LA LISTE???
                 //TODO
-                System.out.println(rs.getString("immatriculation"));
+                res_immat.add(rs.getString("immatriculation"));
+                res_borne.add(rs.getString("id_borne"));
+
             }
-            /*System.out.println("Notre système à trouvé cette plaque d'immatriculation : " + rs.getString("immatriculation")+"" +
+            System.out.println("Notre système a trouvé cette plaque d'immatriculation : " + res_immat.get(0)+" affectée à cette borne : " + res_borne.get(0) +
                     "\nEst-ce la votre ?" +
                     "\nOui : 1" +
                     "\nNon : 2");
             int choix = sc.nextInt();
             switch(choix){
                 case 1:
-                    //TODO
+                    System.out.println("Souhaitez-vous l'utiliser?" +
+                            "\nOui : 1" +
+                            "\nNon : 2");
+                    choix = sc.nextInt();
+                    switch(choix){
+                        case 1:
+                            stmt.executeUpdate("UPDATE BORNE SET etat = 'Occupée' WHERE id_borne = "+res_borne.get(0));
+                            System.out.println("La borne "+res_borne.get(0)+" vous attend.");
+                            break;
+
+                        case 2:
+                            actionMenu();
+                            break;
+                        default:
+                            System.out.println("La valeur renseignée n'est pas la bonne.");
+
+                    }
                     break;
                 case 2:
                     System.out.println("Nous vous invitons à réserver une place si vous ne l'avez pas fait ou recommencer");
-            }*/
+                    actionMenu();
+                    break;
+                default:
+                    System.out.println("La valeur renseignée n'est pas la bonne.");
+            }
         }catch (Exception e){
             System.out.println("Votre réservation n'a pas été trouvé");
             System.out.println(e);
@@ -159,7 +189,18 @@ public class Connexion{
 
     }
 
-    public void propReservation(int num_membre){
+    public void propReservation(String num){
+        try {
+            Statement stmt=con.createStatement();
+            stmt.executeQuery("");
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
+            System.out.println("Nous avons trouvé une reservation pour ce membre : " + rs.getInt("num_membre")
+                    +"\nà cette date de début : "+ rs.getDate("date_debut"));
+
+
+        }catch (Exception e){
+
         System.out.println("Nous trouvons aucune reservation pour vous." +
                 "\nSouhaitez vous réserver une borne ?" +
                 "\n1 : Oui" +
@@ -169,24 +210,35 @@ public class Connexion{
         switch (choix){
             case 1:
                 System.out.println("Vous êtes sur le point de réserver une borne." +
-                        "\nVeuillez renseigner la durée de charge en minutes.");
-                int duree = sc.nextInt();
+                        "\nVeuillez renseigner la date de début au format YYYY-MM-JJ HH:MM:SS.");
+                String date_deb=sc.nextLine();
+                System.out.println("Veuillez renseigner la date de fin au format YYYY-MM-JJ HH:MM:SS.");
+                String date_fin=sc.nextLine();
+                System.out.println("Vos dates sont enregistrées.");
+                String borne_dispo = String.valueOf(firstBorneDispo());
+                System.out.println("date deb = " +date_deb+ "datefin : "+ date_fin);
+                reserver(borne_dispo,num,date_deb,date_fin);
 
-                try {
-                    Statement stmt=con.createStatement();
-                    stmt.executeQuery("INSERT INTO reservation (num_membre, id_brone, date_deb, date_fin) values ('"+
-                            num_membre+"','"+firstBorneDispo()+"',sysdate(),date_add(sysdate(),INTERVAL "+ duree +" MINUTE)')");
+            case 2:
+                actionMenu();
+                break;
+            default:
+                System.out.println("Valeur incorrect");
+        }
 
-                    ResultSet rs = stmt.executeQuery("SELECT date_fin FROM reservation WHERE num_membre = "+num_membre+" and TIMESTAMPDIFF(MINUTE,date_deb,date_fin) = "+duree);
-                    Date date_fin = rs.getDate("date_fin");
-                    System.out.println("La réservation a été prise en compte." +
-                            "\nVous pouvez recharger votre véhicule jusqu'au : " + date_fin);
+        }
+    }
+    public static void test(String num) {
+        try {
+            Statement stmt=con.createStatement();
+            stmt.executeQuery("");
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
+            System.out.println("Res : " + rs.getInt("num_membre"));
 
 
-                }catch (Exception e){
-                    System.out.println("La réservation a échouée");
-                }
-
+        }catch (Exception e){
+            System.out.println("Valeur non trouvée");
         }
     }
 }
