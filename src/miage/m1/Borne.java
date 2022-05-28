@@ -1,21 +1,12 @@
 package miage.m1;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Borne {
-
-    int id_borne;
-    String etat_borne;
     Scanner sc = new Scanner(System.in);
     private static Connection con ;
-
-    public Borne(int id_borne, String etat_borne) {
-        id_borne = this.id_borne;
-        etat_borne = this.etat_borne;
-    }
+    static Main main = new Main();
 
     public void creerUneBorne() {
 
@@ -32,7 +23,36 @@ public class Borne {
             System.out.println(e);
         }
     }
+    public void afficheDev(String num){
+        System.out.println(num);
 
+        try {
+            Statement stmt= con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT adresse FROM client WHERE num_membre= "+num);
+            System.out.println(rs.getString("adresse"));
+            /*if (rs.getInt("estInterne")==1){
+                System.out.println("Vous faites partie des gérants.\n"+
+                        "En tant que tel souhaitez vous : \n" +
+                        "1 - Afficher les bornes disponibles ?\n" +
+                        "2 - Créer une nouvelle borne ?\n" +
+                        "3 - Ou bien aller au menu client ?");
+                int choix = sc.nextInt();
+                switch(choix){
+                    case 1:
+                        afficheBorneDispo();
+                        break;
+                    case 2:
+                        creerUneBorne();
+                        break;
+                    case 3:
+                        main.actionMenu();
+                }
+            }
+*/
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
     public void afficheBorneDispo() {
         try {
             System.out.println("Voici la liste des bornes disponibles :");

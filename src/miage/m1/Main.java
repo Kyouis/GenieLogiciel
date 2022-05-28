@@ -1,4 +1,3 @@
-
 package miage.m1;
 
 import java.sql.ResultSet;
@@ -14,7 +13,8 @@ import java.util.Scanner;
 public class Main {
 
     static Scanner sc = new Scanner(System.in);
-    static Connexion connexion =new Connexion();
+    static Connexion connexion = new Connexion();
+    static Borne borne = new Borne();
     static String userConnected = "-1";
     public static void main(String[] args) {
 
@@ -33,7 +33,7 @@ public class Main {
     public static void Startmenu() {
         System.out.println("1 - Inscription à l'application\n" +
                 "2 - Connexion\n" +
-                "3 - Deconnexion");
+                "3 - Déconnexion");
         String choix = sc.nextLine();
         switch (choix) {
             case "1":
@@ -47,6 +47,7 @@ public class Main {
                 break;
             case "4":
                 System.out.println("/!\\Case de tests de fonctions");
+
                 break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");
@@ -55,10 +56,10 @@ public class Main {
     }
 
     public static void signin() {
-        System.out.println("Cr�ation de compte : Veuillez entrez votre mail :");
+        System.out.println("Création de compte : Veuillez entrez votre mail :");
         String mail =sc.nextLine();
         if (connexion.verifMail(mail)){
-            System.out.println(" Veuillez entrez votre nom :");
+            System.out.println("Veuillez entrez votre nom :");
             String nom = sc.nextLine();
             System.out.println("Veuillez entrez votre prenom :");
             String prenom =sc.nextLine();
@@ -90,11 +91,14 @@ public class Main {
     }
 
     public static void actionMenu() {
+        connexion.afficheDev(num);
         connexion.propReservation(num);
         System.out.println("Choisissez l'action à réaliser");
-        System.out.println("1 - Réserver une borne \n" +
-                "2 - Utiliser une borne sans réservation \n" +
-                "3 - Prolonger ma réservation");
+        System.out.println("   1 - Réserver une borne \n" +
+                "   2 - Utiliser une borne sans réservation \n" +
+                "   3 - Prolonger ma réservation\n" +
+                "   4 - Rechercher une reservation par votre numéro de membre et la durée de charge\n" +
+                "   5 - Ajouter une plaque d'immatriculation à votre compte");
         String choix = sc.nextLine();
         switch (choix) {
             case "1":
@@ -105,6 +109,12 @@ public class Main {
                 break;
             case "3":
                 prolongation();
+                break;
+            case "4":
+                connexion.rechResNumMbDuree();
+                break;
+            case "5":
+                connexion.ajoutPlaqueImmat();
                 break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");

@@ -20,7 +20,7 @@ public class Connexion{
     public static void openConnexion() {
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/GenieLogiciel","root","");
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/GenieLogiciel","root","root");
 
             System.out.println("Connected");
         }
@@ -137,14 +137,15 @@ public class Connexion{
         immatriculation= sc.next();
         System.out.println("Entrez la marque de votre véhicule.");
         marque_vehicule= sc.next();
-        System.out.println("Entrez le modele de votre véhicule.");
+        System.out.println("Entrez le modèle de votre véhicule.");
         modele_vehicule= sc.next();
         try{
             Statement stmt=con.createStatement();
             //Insère dans la table la plaque d'immatriculation
             stmt.execute("INSERT INTO vehicule (immatriculation, num_membre, marque, modele) values ('"+
                     immatriculation+"','"+num_membre +"','"+marque_vehicule+"','"+modele_vehicule+"')");
-
+            System.out.println("Votre véhicule a été enregistré avec cette plaque : "+immatriculation);
+            actionMenu();
         }
         catch(Exception e){
             System.out.println(e);
@@ -166,22 +167,20 @@ public class Connexion{
             ArrayList res_borne = new ArrayList<>();
 
             while (rs.next()) {
-                //COMMENT RECUPERER LE PREMIER DE LA LISTE???
-                //TODO
                 res_immat.add(rs.getString("immatriculation"));
                 res_borne.add(rs.getString("id_borne"));
 
             }
             System.out.println("Notre système a trouvé cette plaque d'immatriculation : " + res_immat.get(0)+" affectée à cette borne : " + res_borne.get(0) +
                     "\nEst-ce la votre ?" +
-                    "\nOui : 1" +
-                    "\nNon : 2");
+                    "\n Oui : 1" +
+                    "\n Non : 2");
             int choix = sc.nextInt();
             switch(choix){
                 case 1:
                     System.out.println("Souhaitez-vous l'utiliser?" +
-                            "\nOui : 1" +
-                            "\nNon : 2");
+                            "\n Oui : 1" +
+                            "\n Non : 2");
                     choix = sc.nextInt();
                     switch(choix){
                         case 1:
@@ -214,55 +213,184 @@ public class Connexion{
     public void propReservation(String num){
         try {
             Statement stmt=con.createStatement();
-            stmt.executeQuery("");
+            ResultSet rs = stmt.executeQuery("SELECT num_membre, date_deb FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
-            System.out.println("Nous avons trouvé une reservation pour ce membre : " + rs.getInt("num_membre")
-                    +"\nà cette date de début : "+ rs.getDate("date_debut"));
+            //Si aucune reservation n'est trouvée
+            if (!rs.next()){
+                System.out.println("Nous trouvons aucune reservation pour vous." +
+                        "\nSouhaitez vous réserver une borne ?" +
+                        "\n 1 : Oui" +
+                        "\n 2 : Non");
+
+                int choix = sc.nextInt();
+                switch (choix){
+                    case 1:
+                        System.out.println("Vous êtes sur le point de réserver une borne." +
+                                "\nVeuillez renseigner la date de début au format YYYY-MM-JJ HH:MM:SS.");
+                        String date_deb=sc.nextLine();
+                        System.out.println("Veuillez renseigner la date de fin au format YYYY-MM-JJ HH:MM:SS.");
+                        String date_fin=sc.nextLine();
+                        System.out.println("Vos dates sont enregistrées.");
+                        String borne_dispo = String.valueOf(firstBorneDispo());
+                        System.out.println("date deb = " +date_deb+ "datefin : "+ date_fin);
+                        //fontionne pas TODO
+                        reserver(borne_dispo,num,date_deb,date_fin);
+
+                    case 2:
+                        break;
+                    default:
+                        System.out.println("Valeur incorrect");
+                }
+            }else{
+                //Si une/des réservations sont trouvées
+                rs = stmt.executeQuery("SELECT num_membre, date_deb FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
+
+                System.out.println("\nNous avons trouvé une reservation pour le membre n°"+num+"\nVoici la lise des dates :");
+                while (rs.next()){
+                    System.out.println("    *"+ rs.getString("date_deb"));
+                }
+            }
 
 
-        }catch (Exception e){
-
-        System.out.println("Nous trouvons aucune reservation pour vous." +
-                "\nSouhaitez vous réserver une borne ?" +
-                "\n1 : Oui" +
-                "\n2 : Non");
-
-        int choix = sc.nextInt();
-        switch (choix){
-            case 1:
-                System.out.println("Vous êtes sur le point de réserver une borne." +
-                        "\nVeuillez renseigner la date de début au format YYYY-MM-JJ HH:MM:SS.");
-                String date_deb=sc.nextLine();
-                System.out.println("Veuillez renseigner la date de fin au format YYYY-MM-JJ HH:MM:SS.");
-                String date_fin=sc.nextLine();
-                System.out.println("Vos dates sont enregistrées.");
-                String borne_dispo = String.valueOf(firstBorneDispo());
-                System.out.println("date deb = " +date_deb+ "datefin : "+ date_fin);
-                reserver(borne_dispo,num,date_deb,date_fin);
-
-            case 2:
-                actionMenu();
-                break;
-            default:
-                System.out.println("Valeur incorrect");
-        }
-
+        }catch (Exception e) {
+            System.out.println(e);
         }
     }
-    public static void test(String num) {
+
+//CLASSE BORNE
+    //menu pour une personne en interne
+    public void afficheDev(String num){
+
         try {
-            Statement stmt=con.createStatement();
-            stmt.executeQuery("");
+            Statement stmt= con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT estInterne FROM client WHERE num_membre= "+num);
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Reservation WHERE num_membre = "+num+" AND date_fin > sysdate()");
-            System.out.println("Res : " + rs.getInt("num_membre"));
+            ArrayList res_estInterne = new ArrayList<>();
 
+            while (rs.next()) {
+                res_estInterne.add(rs.getInt("estInterne"));
+            }
+            System.out.println(res_estInterne.get(0));
 
-        }catch (Exception e){
-            System.out.println("Valeur non trouvée");
+            if (res_estInterne.get(0).equals(1)){
+                System.out.println("Vous faites partie des gérants.\n"+
+                        "En tant que tel souhaitez vous : \n" +
+                        "   1 - Afficher les bornes disponibles ?\n" +
+                        "   2 - Créer une nouvelle borne ?\n" +
+                        "   3 - Modifier l'état d'une borne\n" +
+                        "   4 - Modifier des paramètres\n" +
+                        "   5 - Ou bien aller au menu client ?");
+                int choix = sc.nextInt();
+                switch(choix){
+                    case 1:
+                        afficheBorneDispo();
+                        break;
+                    case 2:
+                        creerUneBorne();
+                        break;
+                    case 3:
+                        modEtatBorne();
+                        break;
+                    case 4:
+                        modParam();
+                        break;
+                    case 5:
+                        break;
+                    default:
+                        System.out.println("Entrez une valeur de la liste.");
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
+
+    //Affiche les bornes disponibles
+    public void afficheBorneDispo() {
+        try {
+            System.out.println("Voici la liste des bornes disponibles :");
+            String etat_borne =sc.nextLine();
+            Statement stmt= con.createStatement();
+
+            //Récupère la liste des bornes dispo
+            ResultSet rs = stmt.executeQuery("SELECT id_borne FROM Borne WHERE etat= 'disponible'");
+            //Récupère la colonne id_borne
+            while (rs.next()) {
+                System.out.println("    n°"+rs.getInt("id_borne"));
+            }
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+
+    //Permet de créer une borne
+    public void creerUneBorne() {
+        try {
+            System.out.println("Quel état souhaitez vous affecter à cette borne ? (Disponible, Occupée, Réservée, Indisponible)");
+            String etat_borne = sc.next();
+
+            Statement stmt= con.createStatement();
+            stmt.executeUpdate("insert into Borne (etat) values ('"+etat_borne+"')");
+
+            System.out.println("La borne a bien été créée !");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    //Modifier les paramètres
+    public void modEtatBorne(){
+        System.out.println("Vous souhaitez modifier l'état d'une borne.");
+        try {
+
+            Statement stmt= con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT id_borne, etat FROM Borne");
+
+
+            while (rs.next()) {
+                System.out.println("    n°"+rs.getInt("id_borne")+" etat : "+rs.getString("etat"));
+            }
+            System.out.println("Indiquez quelle borne vous voulez modifier.");
+            int id_borne = sc.nextInt();
+            System.out.println("Entrez la valeur de l'état.");
+            String etat_borne = sc.next();
+
+            stmt.executeUpdate("UPDATE borne SET etat = '"+etat_borne+ "' WHERE id_borne = " +id_borne);
+            System.out.println("La borne n°"+id_borne+" est maintenant "+etat_borne);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    //Modifie les paramètres
+    public void modParam(){
+        System.out.println("Vous souhaitez changer des paramètres.");
+        try {
+            Statement stmt= con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT nom_param, valeur FROM Parametre");
+            System.out.println("Voici la liste des paramètres :");
+            while (rs.next()) {
+                System.out.println("    nom : "+rs.getString("nom_param")+" = "+rs.getInt("valeur"));
+            }
+            System.out.println("Indiquez quel paramètre vous voulez modifier.");
+            String nom_param = sc.next();
+            System.out.println("Entrez la valeur de l'état.");
+            int valeur = sc.nextInt();
+
+            stmt.executeUpdate("UPDATE parametre SET valeur = "+valeur+" WHERE nom_param = '" + nom_param+"'");
+            System.out.println("Le paramètre "+nom_param+" est maintenant réglé à "+valeur);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+
+
 }
 
 
