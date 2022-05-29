@@ -229,6 +229,7 @@ public class Connexion{
                                 "\nVeuillez renseigner la date de début au format YYYY-MM-JJ HH:MM:SS.");
                         String date_deb=sc.nextLine();
                         System.out.println("Veuillez renseigner la date de fin au format YYYY-MM-JJ HH:MM:SS.");
+
                         String date_fin=sc.nextLine();
                         System.out.println("Vos dates sont enregistrées.");
                         String borne_dispo = String.valueOf(firstBorneDispo());
@@ -279,7 +280,8 @@ public class Connexion{
                         "   2 - Créer une nouvelle borne ?\n" +
                         "   3 - Modifier l'état d'une borne\n" +
                         "   4 - Modifier des paramètres\n" +
-                        "   5 - Ou bien aller au menu client ?");
+                        "   5 - Afficher le profil d'un client\n" +
+                        "   6 - Ou bien aller au menu client ?");
                 int choix = sc.nextInt();
                 switch(choix){
                     case 1:
@@ -295,6 +297,9 @@ public class Connexion{
                         modParam();
                         break;
                     case 5:
+                        afficheProfilCli();
+                        break;
+                    case 6:
                         break;
                     default:
                         System.out.println("Entrez une valeur de la liste.");
@@ -389,6 +394,35 @@ public class Connexion{
         }
     }
 
+    public void afficheProfilCli() {
+        try {
+            Statement stmt= con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT num_membre, nom, prenom FROM Client");
+            System.out.println("Voici la liste des clients :");
+            while (rs.next()) {
+                System.out.println("    - Membre n°"+rs.getString("num_membre")+" nom : "+rs.getString("nom")+" prénom : "+rs.getString("prenom"));
+            }
+            System.out.println("\nIndiquez le numéro du membre que vous voulez visualiser.");
+            num_membre = sc.nextInt();
+            rs = stmt.executeQuery("SELECT num_membre, nom, prenom, adresse_postale, adresse_mail, num_tel, contrat, motif_contrat, estInterne " +
+                    "FROM Client " +
+                    "WHERE num_membre = "+num_membre);
+            System.out.println("Voici la fiche du client :");
+            while (rs.next()) {
+                System.out.println(" Membre n°"+rs.getString("num_membre") +"\n"
+                        + " nom : "+rs.getString("nom") +"\n"
+                        + " prénom : "+rs.getString("prenom")+"\n"
+                        + " adresse postale : "+rs.getString("adresse_postale")+"\n"
+                        + " adresse mail : "+rs.getString("adresse_mail")+"\n"
+                        + " numéro de téléphone : "+rs.getString("num_tel")+"\n"
+                        + " contrat : "+rs.getString("contrat")+"\n"
+                        + " motif si contrat : "+rs.getString("motif_contrat")+"\n"
+                        + " interne : "+rs.getString("estInterne"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
 
 }
