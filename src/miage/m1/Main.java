@@ -120,25 +120,51 @@ public class Main {
                 break;
             case "6":
                 modifReserv();
+            case "7":
+                partirPlusTot();
             default:
                 System.out.println("Veuillez rentrer un choix valide");
                 actionMenu();
         }
     }
 
-    public static void modifReserv() throws SQLException {
-        System.out.println("Voici vos reservation, laquelle voulez-vous modifier ?");
-        String modif;
-        int i = 1;
-        ResultSet rs = connexion.listReservMembre(userConnected);
-        while (rs.next()) {
-            System.out.println(i + " - "+ rs.getString("date_deb") + " - "+ rs.getString("date_fin")+ " à la borne "+rs.getString("id_borne"));
+    public static void partirPlusTot() {
+        try {
+            System.out.println("Quelle reservation souhaitez-vous terminer en avance ?");
+            String modif;
+            int i = 1;
+            ResultSet rs = connexion.listReservMembre(userConnected);
+            while (rs.next()) {
+                System.out.println(i + " - "+ rs.getString("date_deb") + " - "+ rs.getString("date_fin")+ " à la borne "+rs.getString("id_borne"));
+            }
+            modif = sc.nextLine();
+            connexion.changeReservationPartirPlusTot(modif);
+            connexion.modEtatBorne();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-        String choix = sc.nextLine();
-        switch (choix) {
-            case "1":
+    }
 
+    public static void modifReserv(){
+        try {
+            System.out.println("Voici vos reservation, laquelle voulez-vous modifier ?");
+            String modif;
+            int i = 1;
+            ResultSet rs = connexion.listReservMembre(userConnected);
+            while (rs.next()) {
+                System.out.println(i + " - "+ rs.getString("date_deb") + " - "+ rs.getString("date_fin")+ " à la borne "+rs.getString("id_borne"));
+            }
+            modif = sc.nextLine();
+            System.out.println("Choisissez une nouvelle date de début");
+            String dated = sc.nextLine();
+            System.out.println("Choisissez une nouvelle date de fin");
+            String datef = sc.nextLine();
+            connexion.updateReserv(modif, dated, datef);
+            System.out.println("La réservation a été modifiée");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
+        actionMenu();
     }
 
     public static void reservationBorne(Boolean b) {

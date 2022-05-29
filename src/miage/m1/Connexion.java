@@ -99,6 +99,15 @@ public class Connexion{
 
     }
 
+    public void updateReserv(String nbReserv, String dateDebut, String dateFin) {
+        try {
+            Statement s = con.createStatement();
+            s.executeUpdate("UPDATE TABLE RESERVATION SET date_deb = + " +dateDebut+" , date_fin = "+dateFin+" WHERE num_res = "+ nbReserv);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public ResultSet listReservMembre(String idMembre) {
         Statement stmt= null;
         try {
@@ -140,11 +149,12 @@ public class Connexion{
         return matcher.matches();
     }
 
-    int num_membre;
-    String immatriculation;
-    String marque_vehicule;
-    String modele_vehicule;
+
     public void ajoutPlaqueImmat(){
+        int num_membre;
+        String immatriculation;
+        String marque_vehicule;
+        String modele_vehicule;
         System.out.println("Entrez votre numéro de membre.");
         num_membre= sc.nextInt();
         System.out.println("Entrez votre plaque d'immatriculation.");
@@ -382,6 +392,21 @@ public class Connexion{
             System.out.println("La borne n°"+id_borne+" est maintenant "+etat_borne);
         } catch (Exception e) {
             System.out.println(e);
+        }
+    }
+
+    public void changeReservationPartirPlusTot(String idR) {
+        Statement stmt= null;
+        try {
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT id_borne FROM RESERVATION WHERE num_res = "+idR);
+            String b="";
+            while (rs.next()) {
+                b = rs.getString("id_borne");
+            }
+            stmt.executeUpdate("UPDATE borne SET etat = 'disponible' WHERE id_borne = " + b);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
