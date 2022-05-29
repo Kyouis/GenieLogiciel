@@ -37,6 +37,7 @@ create table Reservation (
     num_res integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
     date_deb datetime NOT NULL,
     date_fin datetime NOT NULL,
+    date_fin_prolong datetime NOT NULL,
     delai_retard integer,
     num_membre integer NOT NULL,
     id_borne integer NOT NULL,

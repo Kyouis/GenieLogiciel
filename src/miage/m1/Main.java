@@ -17,7 +17,7 @@ public class Main {
     static Connexion connexion = new Connexion();
     static Borne borne = new Borne();
     static String userConnected = "-1";
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         Connexion.openConnexion();
 
@@ -31,7 +31,7 @@ public class Main {
 
     }
 
-    public static void Startmenu() {
+    public static void Startmenu() throws SQLException {
         System.out.println("1 - Inscription à l'application\n" +
                 "2 - Connexion\n" +
                 "3 - Déconnexion");
@@ -56,7 +56,7 @@ public class Main {
         }
     }
 
-    public static void signin() {
+    public static void signin() throws SQLException {
         System.out.println("Création de compte : Veuillez entrez votre mail :");
         String mail =sc.nextLine();
         if (connexion.verifMail(mail)){
@@ -76,7 +76,7 @@ public class Main {
         Startmenu();
     }
     static String num;
-    public static void login() {
+    public static void login() throws SQLException {
         System.out.println("Veuillez rentrer votre numéro de membre");
         num = sc.nextLine();
         connexion.fetchUser(num);
@@ -91,7 +91,7 @@ public class Main {
         Startmenu();
     }
 
-    public static void actionMenu() {
+    public static void actionMenu() throws SQLException {
         connexion.afficheDev(num);
         connexion.propReservation(num);
         System.out.println("Choisissez l'action à réaliser");
@@ -167,13 +167,17 @@ public class Main {
     public static void prolongation() {
         System.out.println("Indiquez le numero de la borne qui est assignée à la reservation à prolonger");
         String nBorne = sc.nextLine();
-        System.out.println("Indiquez la date de fin de la réservation à prolonger");
+        System.out.println("Indiquez quelle reservation voulez-vous prolonger parmit cette liste :");
+        System.out.println( connexion.listReservMembre(userConnected) );
+        String numres =sc.next();
+        System.out.println("Indiquez la date de fin de la r�servation :");
         String datefin = sc.nextLine();
+        
         if (connexion.checkProlongationPossible(nBorne, datefin, "30")) {
             System.out.println("votre prolongation est faite");
             try {
-                java.sql.Date datefinparse= (java.sql.Date) new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(datefin);
-                connexion.reserver(nBorne, userConnected, datefin, new java.sql.Date(datefinparse.getTime()+((long) 30 *60*1000)).toString());
+            	java.sql.Date datefinparse= (java.sql.Date) new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(datefin);
+                connexion.reserverProlongation(numres, new java.sql.Date(datefinparse.getTime()+((long) 30 *60*1000)).toString());
             } catch (ParseException e) {
                 e.printStackTrace();
             }

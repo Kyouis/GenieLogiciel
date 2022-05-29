@@ -71,6 +71,25 @@ public class Connexion{
         }
         return -1;
     }
+    
+    public int bornedispoPerm(String datedebut,String d) {
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT *\r\n"
+            		+ "FROM borne b\r\n"
+            		+ "left join Reservation r on r.id_borne = b.id_borne\r\n"
+            		+ "where b.etat = 'Disponible'\r\n"
+            		+ "    and COALESCE(r.date_deb,'2000-07-10 12:00:00') < '"+ datedebut +"'"
+            		+ "    and COALESCE(r.date_fin,'2200-07-10 12:00:00') > '"+ d );
+            while (rs.next()) {
+                return rs.getInt("id_borne");
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return -1;
+    }
 
     //utilisation d'une borne
     public void useBorne(String num, String user, String datedebut, String dateFin) {
@@ -97,6 +116,17 @@ public class Connexion{
             throwables.printStackTrace();
         }
 
+    }
+    public void reserverProlongation(String numres, String datefin) {
+        try {
+            Statement s = con.createStatement();
+            String q = "INSERT INTO RESERVATION (date_fin_prolong) VALUES ('"+datefin+") WHERE num_res="+numres+"";
+            System.out.println(q);
+            int t = s.executeUpdate(q);
+            System.out.println("Prolongation ok");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public ResultSet listReservMembre(String idMembre) {
@@ -144,6 +174,7 @@ public class Connexion{
     String immatriculation;
     String marque_vehicule;
     String modele_vehicule;
+    
     public void ajoutPlaqueImmat(){
         System.out.println("Entrez votre numéro de membre.");
         num_membre= sc.nextInt();
@@ -437,9 +468,32 @@ public class Connexion{
             System.out.println(e);
         }
     }
+    
+    
+    public void facture() {
+		 try {
+			 Statement stmt= con.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM `reservation` WHERE date_fin+date_fin_prolong<NOW()");
+	            while (rs.next()) {
+	            	
+	            	long differenceInMilliSeconds = rs.getDate("date_fin").getTime()- rs.getDate("date_debut").getTime();
+	            	long minute = (differenceInMilliSeconds/1000)/60;
+	            	double total = minute*0.02;
+	            	
+	            	if(!rs.getDate("date_fin_prolong").equals("0000-00-00 00:00:00")) {
+	            		long differenceInMilliSecond = rs.getDate("date_fin_prolong").getTime()- rs.getDate("date_fin").getTime();
+		            	long min = (differenceInMilliSecond/1000)/60;
+		            	total += minute*0.15;
+	            	}
+	                
+	            }
+		} catch (Exception e) {
+			System.out.println(e);
+		} 
 
 
 
+    }
 }
 
 

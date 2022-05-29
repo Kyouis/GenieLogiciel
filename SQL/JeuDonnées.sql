@@ -24,11 +24,11 @@ values  ('AA-111-BB', 'Tesla', '3', 3, 1),
         ('AD-114-BE', 'Toyota', 'bZ4x', null, 3);
 commit;
 
-insert into Reservation (num_res, date_deb, date_fin, delai_retard, num_membre, id_borne, immatriculation) values
-        (1, '2022-05-08 11:30:00', '2022-05-08 12:30:00', null, 2, 3, 'AA-111-BB'),
-        (2, '2022-05-11 11:30:00', '2022-05-11 12:30:00', null, 2, 3, 'AB-112-BC'),
-        (3, '2022-05-14 11:30:00', '2022-05-14 12:30:00', null, 2, 3, 'AC-113-BD'),
-        (4, '2022-05-15 11:30:00', '2022-05-15 12:30:00', null, 2, 3, 'AD-114-BE');
+insert into Reservation (num_res, date_deb, date_fin, date_fin_prolong, delai_retard, num_membre, id_borne, immatriculation) values
+        (1, '2022-05-08 11:30:00', '2022-05-08 12:30:00','2022-05-08 13:30:00',null, 2, 3, 'AA-111-BB'),
+        (2, '2022-05-11 11:30:00', '2022-05-11 12:30:00',null, null, 2, 3, 'AB-112-BC'),
+        (3, '2022-05-14 11:30:00', '2022-05-14 12:30:00','2022-05-14 13:00:00', null, 2, 3, 'AC-113-BD'),
+        (4, '2022-05-15 11:30:00', '2022-05-15 12:30:00',null, null, 2, 3, 'AD-114-BE');
 commit;
 
 insert into Transaction (id_transaction, montant_charge, montant_res, montant_penalite, num_membre, num_res)
