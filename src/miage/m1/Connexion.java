@@ -179,15 +179,7 @@ public class Connexion{
         return matcher.matches();
     }
 
-<<<<<<< HEAD
 
-=======
-    int num_membre;
-    String immatriculation;
-    String marque_vehicule;
-    String modele_vehicule;
-    
->>>>>>> af5834ca08a56950f14d57dcea988d6a7664d6be
     public void ajoutPlaqueImmat(){
         int num_membre;
         String immatriculation;
@@ -218,7 +210,7 @@ public class Connexion{
     public void rechResNumMbDuree(){
         int duree;
         System.out.println("Veuillez entrer votre numéro de membre.");
-        num_membre = sc.nextInt();
+        int num_membre = sc.nextInt();
         System.out.println("Entrez maintenant la durée de votre réservation en minutes.");
         duree = sc.nextInt();
         try {
@@ -320,7 +312,7 @@ public class Connexion{
         }
     }
 
-//CLASSE BORNE
+
     //menu pour une personne en interne
     public void afficheDev(String num){
 
@@ -480,7 +472,7 @@ public class Connexion{
                 System.out.println("    - Membre n°"+rs.getString("num_membre")+" nom : "+rs.getString("nom")+" prénom : "+rs.getString("prenom"));
             }
             System.out.println("\nIndiquez le numéro du membre que vous voulez visualiser.");
-            num_membre = sc.nextInt();
+            int num_membre = sc.nextInt();
             rs = stmt.executeQuery("SELECT num_membre, nom, prenom, adresse_postale, adresse_mail, num_tel, contrat, motif_contrat, estInterne " +
                     "FROM Client " +
                     "WHERE num_membre = "+num_membre);

@@ -15,7 +15,6 @@ public class Main {
 
     static Scanner sc = new Scanner(System.in);
     static Connexion connexion = new Connexion();
-    static Borne borne = new Borne();
     static String userConnected = "-1";
     public static void main(String[] args) throws SQLException {
 
@@ -45,10 +44,6 @@ public class Main {
                 break;
             case "3":
                 deco();
-                break;
-            case "4":
-                System.out.println("/!\\Case de tests de fonctions");
-
                 break;
             default:
                 System.out.println("Veuillez rentrer un choix valide");
@@ -88,7 +83,12 @@ public class Main {
     public static void deco(){
         userConnected = "-1";
         System.out.println("Au revoir");
-        Startmenu();
+        try {
+			Startmenu();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public static void actionMenu() throws SQLException {
@@ -164,7 +164,12 @@ public class Main {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        actionMenu();
+        try {
+			actionMenu();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public static void reservationBorne(Boolean b) {
@@ -187,7 +192,12 @@ public class Main {
             connexion.useBorne(String.valueOf(connexion.firstBorneDispo()), userConnected, datedebut, d);
 
         }
-        actionMenu();
+        try {
+			actionMenu();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public static void prolongation() {
@@ -211,7 +221,12 @@ public class Main {
         } else {
             System.out.println("il n'est pas possible de prolonger");
         }
-        actionMenu();
+        try {
+			actionMenu();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }
