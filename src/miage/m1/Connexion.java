@@ -99,6 +99,20 @@ public class Connexion{
 
     }
 
+    public ResultSet listReservMembre(String idMembre) {
+        Statement stmt= null;
+        try {
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM RESERVATION WHERE num_membre = "+idMembre);
+            return rs;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+
+    }
+
+
     public boolean checkProlongationPossible(String numBorne,String datefin, String dureeProl) {
         boolean res = true;
         try {
@@ -423,6 +437,7 @@ public class Connexion{
             System.out.println(e);
         }
     }
+
 
 
 }

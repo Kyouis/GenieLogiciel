@@ -1,6 +1,7 @@
 package miage.m1;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -98,7 +99,8 @@ public class Main {
                 "   2 - Utiliser une borne sans réservation \n" +
                 "   3 - Prolonger ma réservation\n" +
                 "   4 - Rechercher une reservation par votre numéro de membre et la durée de charge\n" +
-                "   5 - Ajouter une plaque d'immatriculation à votre compte");
+                "   5 - Ajouter une plaque d'immatriculation à votre compte" +
+                "   6 - Modifier une réservation");
         String choix = sc.nextLine();
         switch (choix) {
             case "1":
@@ -116,9 +118,26 @@ public class Main {
             case "5":
                 connexion.ajoutPlaqueImmat();
                 break;
+            case "6":
+                modifReserv();
             default:
                 System.out.println("Veuillez rentrer un choix valide");
                 actionMenu();
+        }
+    }
+
+    public static void modifReserv() throws SQLException {
+        System.out.println("Voici vos reservation, laquelle voulez-vous modifier ?");
+        String modif;
+        int i = 1;
+        ResultSet rs = connexion.listReservMembre(userConnected);
+        while (rs.next()) {
+            System.out.println(i + " - "+ rs.getString("date_deb") + " - "+ rs.getString("date_fin")+ " à la borne "+rs.getString("id_borne"));
+        }
+        String choix = sc.nextLine();
+        switch (choix) {
+            case "1":
+
         }
     }
 
