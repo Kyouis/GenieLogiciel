@@ -276,14 +276,15 @@ public class Connexion{
                         "\n 1 : Oui" +
                         "\n 2 : Non");
 
-                int choix = sc.nextInt();
+                String choix = sc.nextLine();
                 switch (choix){
-                    case 1:
+                    case "1":
+                    	
                         System.out.println("Vous êtes sur le point de réserver une borne." +
                                 "\nVeuillez renseigner la date de début au format YYYY-MM-JJ HH:MM:SS.");
                         String date_deb=sc.nextLine();
                         System.out.println("Veuillez renseigner la date de fin au format YYYY-MM-JJ HH:MM:SS.");
-
+                        
                         String date_fin=sc.nextLine();
                         System.out.println("Vos dates sont enregistrées.");
                         String borne_dispo = String.valueOf(firstBorneDispo());
@@ -291,7 +292,7 @@ public class Connexion{
                         //fontionne pas TODO
                         reserver(borne_dispo,num,date_deb,date_fin);
 
-                    case 2:
+                    case "2":
                         break;
                     default:
                         System.out.println("Valeur incorrect");
